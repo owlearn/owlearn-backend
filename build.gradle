@@ -28,6 +28,12 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
+	// JPA (Spring Data JPA)
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+	// H2 Database (개발 및 테스트용 인메모리 DB)
+	runtimeOnly 'com.h2database:h2'
+
 	// lombok (컴파일 시, 애노테이션 처리용)
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
@@ -38,6 +44,11 @@ dependencies {
 	// 테스트
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	/*
+    // PostgreSQL 사용 시 아래 의존성 추가
+    runtimeOnly 'org.postgresql:postgresql'
+    */
 }
 
 tasks.named('test') {
