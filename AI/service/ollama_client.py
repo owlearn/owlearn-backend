@@ -10,7 +10,7 @@ async def call_ollama(prompt: str) -> dict:
     # TODO: 실제 Ollama 연결 시 구현 예정
     # 테스트용 더미 데이터 반환
     return {
-        "title": "The Magical Forest Adventure",
+        "title": "Test Title",
         "contents": [
             "Page 1: Once upon a time, in a lush green forest, lived a curious fox named Felix.",
             "Page 2: Felix found a glowing mushroom and decided to follow the lights it emitted.",
