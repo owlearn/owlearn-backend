@@ -1,8 +1,9 @@
 # $ pip install fastapi
 # $ pip install "uvicorn[standard]"
-# 실행 명령어: uvicorn main:app --reload
+# 실행 명령어: python -m uvicorn main:app --reload
 
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 
 from models import TaleCreateRequest, TaleApiResponse, QuizDto
 from service.tale_prompt import generate_tale_prompt
@@ -12,9 +13,16 @@ from service.image_generator import generate_images
 
 app = FastAPI()
 
+# 정적 파일 서빙: /static 경로로 이미지 접근 가능하게 함
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 @app.post("/api/tales", response_model=TaleApiResponse)
 async def create_tale(request: TaleCreateRequest):
-    # 프롬프트 생성
+    # RAG 추가시
+    # 주제에 따라 외부 지식 검색
+    # 검색된 정보를 포함하여 프롬프트 생성
+
+    # 동화 생성용 프롬프트 생성
     prompt = generate_tale_prompt(request.topic, request.style, request.age)
 
     # Ollama 서버에 프롬프트 전송
@@ -25,7 +33,7 @@ async def create_tale(request: TaleCreateRequest):
     contents = ollama_response.get("contents", [])
     quizzes_raw = ollama_response.get("quizzes", [])
 
-    # 이미지 생성 프롬프트 정제
+    # 이미지 생성용 프롬프트 생성
     image_prompts = generate_final_image_prompts(ollama_response.get("image_prompts", []), request.style)
 
     # 이미지 생성
