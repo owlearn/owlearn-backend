@@ -34,7 +34,7 @@ async def create_tale(request: TaleCreateRequest):
     quizzes_raw = ollama_response.get("quizzes", [])
 
     # 이미지 생성용 프롬프트 생성
-    image_prompts = generate_final_image_prompts(ollama_response.get("image_prompts", []), request.style)
+    image_prompts = generate_final_image_prompts(contents, request.style)
 
     # 이미지 생성
     image_urls = await generate_images(image_prompts)

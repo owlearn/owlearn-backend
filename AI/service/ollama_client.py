@@ -13,10 +13,7 @@ async def call_ollama(prompt: str) -> dict:
         "title": "Test Title3",
         "contents": [
             "Page 1: Once upon a time, in a lush green forest, lived a curious fox named Felix.",
-            "Page 2: Felix found a glowing mushroom and decided to follow the lights it emitted.",
-            "Page 3: He met a talking squirrel who offered him a map to the hidden glade.",
-            "Page 4: Felix crossed a stream of stars and danced with fireflies under the moonlight.",
-            "Page 5: At the heart of the forest, he discovered a magical tree that granted wishes."
+            "Page 2: Felix found a glowing mushroom and decided to follow the lights it emitted."
         ],
         "quizzes": [
             {
