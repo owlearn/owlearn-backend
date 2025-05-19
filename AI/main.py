@@ -23,7 +23,7 @@ async def create_tale(request: TaleCreateRequest):
     # 검색된 정보를 포함하여 프롬프트 생성
 
     # 동화 생성용 프롬프트 생성
-    prompt = generate_tale_prompt(request.topic, request.style, request.age)
+    prompt = generate_tale_prompt(request.topic, request.age)
 
     # Ollama 서버에 프롬프트 전송
     ollama_response = await call_ollama(prompt)
@@ -32,15 +32,15 @@ async def create_tale(request: TaleCreateRequest):
     title = ollama_response.get("title", "Untitled")
     contents = ollama_response.get("contents", [])
     quizzes_raw = ollama_response.get("quizzes", [])
+    quizzes = [QuizDto(**q) for q in quizzes_raw]
+    print(title, "동화 생성 완료")
 
     # 이미지 생성용 프롬프트 생성
     image_prompts = generate_final_image_prompts(contents, request.style)
 
     # 이미지 생성
     image_urls = await generate_images(image_prompts)
-
-    # 퀴즈 파싱
-    quizzes = [QuizDto(**q) for q in quizzes_raw]
+    print("이미지 생성 완료")
 
     return TaleApiResponse(
         title=title,

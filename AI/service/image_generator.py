@@ -31,6 +31,7 @@ async def generate_images(prompts: List[str]) -> List[str]:
     return await asyncio.to_thread(generate_images_sync, prompts)
 
 def generate_images_sync(prompts: List[str]) -> List[str]:
+    print("이미지 생성 중...")
     output_dir = Path("./static/images")
     output_dir.mkdir(parents=True, exist_ok=True)
 

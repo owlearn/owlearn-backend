@@ -1,37 +1,33 @@
-async def call_ollama(prompt: str) -> dict:
-    """ async with httpx.AsyncClient() as client:
-        response = await client.post(
-            "http://localhost:11434/api/generate",  # 수정 필요 시 이 부분 조정
-            json={"prompt": prompt}
-        )
-        response.raise_for_status()
-        return response.json() """
+import ollama
+import asyncio
+import json
+import re
 
-    # TODO: 실제 Ollama 연결 시 구현 예정
-    # 테스트용 더미 데이터 반환
-    return {
-        "title": "The Magical Adventure of Luna",
-        "contents": [
-            "Page 1: Luna was a curious girl who loved exploring the woods near her village. One day, she found a mysterious glowing stone.",
-            "Page 2: As Luna touched the stone, a portal opened and transported her to a land full of floating islands and talking animals.",
-            "Page 3: She met a friendly fox named Riko who offered to guide her through this strange and beautiful world.",
-            "Page 4: Together, they crossed crystal rivers and climbed candy-colored mountains, searching for the way back home.",
-            "Page 5: After solving the riddle of the Sky Tree, Luna used the glowing stone to return home, promising to visit again someday."
-        ],
-        "quizzes": [
-            {
-                "questionNumber": 1,
-                "question": "What did Luna find in the woods?",
-                "choices": ["A map", "A glowing stone", "A magic book", "A silver key"],
-                "answerIndex": 1,
-                "explanation": "Luna discovered a mysterious glowing stone in the woods."
-            },
-            {
-                "questionNumber": 2,
-                "question": "Who helped Luna explore the magical land?",
-                "choices": ["A talking rabbit", "A wise owl", "A friendly fox", "A kind bear"],
-                "answerIndex": 2,
-                "explanation": "Riko, a friendly fox, guided Luna through the magical world."
-            }
-        ]
-    }
+# 응답 본문에서 JSON 형식 문자열을 추출하는 함수
+def extract_json_from_response(text: str) -> str:
+    match = re.search(r'\{.*\}', text, re.DOTALL)
+    if match:
+        return match.group(0)
+    else:
+        raise ValueError("본문에서 JSON 블럭을 찾지 못했습니다.")
+
+# Ollama 모델을 비동기로 호출하는 함수
+async def call_ollama(prompt: str, model: str = 'deepseek-llm') -> dict:
+    print("동화 생성 중...")
+    def sync_chat():
+        return ollama.chat(model=model, messages=[{
+            'role': 'user',
+            'content': prompt,
+        }])
+
+    # 동기 함수를 비동기 스레드로 실행
+    response = await asyncio.to_thread(sync_chat)
+
+    print(response["message"]["content"])
+
+    # 응답에서 JSON 부분만 추출 후 파싱해서 딕셔너리로 반환
+    try:
+        json_str = extract_json_from_response(response["message"]["content"])
+        return json.loads(json_str)
+    except Exception as e:
+        raise ValueError(f"JSON 파싱 실패: {e}")
