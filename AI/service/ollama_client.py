@@ -7,7 +7,9 @@ import re
 def extract_json_from_response(text: str) -> str:
     match = re.search(r'\{.*\}', text, re.DOTALL)
     if match:
-        return match.group(0)
+        json_str = match.group(0)
+        # ",", 패턴을 ",으로 바꿈
+        return json_str.replace('",",', '",')
     else:
         raise ValueError("본문에서 JSON 블럭을 찾지 못했습니다.")
 

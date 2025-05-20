@@ -18,6 +18,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.post("/api/tales", response_model=TaleApiResponse)
 async def create_tale(request: TaleCreateRequest):
+    print("Fast API 연결 성공")
     # RAG 추가시
     # 주제에 따라 외부 지식 검색
     # 검색된 정보를 포함하여 프롬프트 생성
