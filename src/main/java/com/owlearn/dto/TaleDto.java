@@ -9,7 +9,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TaleApiResponse {
+public class TaleDto {
 
     private String title;
     private List<String> contents;
