@@ -7,7 +7,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TaleCreateResponse {
+public class TaleSummaryResponse {
 
-    private Long id; // 생성된 동화의 DB 기본키 (ID)
+    private Long id;
+    private String title;
 }
