@@ -141,7 +141,7 @@ public class TaleServiceImpl implements TaleService {
     @Override
     public List<String> saveImages(List<MultipartFile> images) {
         List<String> imageUrls = new ArrayList<>();
-        String uploadDir = "src/main/resources/static/images/"; // 프로젝트 내 정적 이미지 폴더 경로
+        String uploadDir = "/home/ubuntu/static/";; // 프로젝트 외부 디렉토리
 
         File uploadPath = new File(uploadDir);
         if (!uploadPath.exists()) {
@@ -165,7 +165,7 @@ public class TaleServiceImpl implements TaleService {
                 File dest = new File(uploadDir + storedFileName);
                 image.transferTo(dest); // 파일 저장
 
-                // 클라이언트가 접근 가능한 URL 경로
+                // 외부 디렉토리 매핑 경로에 맞게 URL 생성
                 String imageUrl = "/images/" + storedFileName;
                 imageUrls.add(imageUrl);
 
