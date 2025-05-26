@@ -6,9 +6,14 @@ import com.owlearn.entity.Tale;
 import com.owlearn.repository.TaleRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -132,4 +137,44 @@ public class TaleServiceImpl implements TaleService {
                 .orElseThrow(() -> new RuntimeException("해당 ID의 동화가 존재하지 않습니다."));
         taleRepository.delete(tale);
     }
+
+    @Override
+    public List<String> saveImages(List<MultipartFile> images) {
+        List<String> imageUrls = new ArrayList<>();
+        String uploadDir = "src/main/resources/static/images/"; // 프로젝트 내 정적 이미지 폴더 경로
+
+        File uploadPath = new File(uploadDir);
+        if (!uploadPath.exists()) {
+            uploadPath.mkdirs(); // 폴더가 없으면 생성
+        }
+
+        for (MultipartFile image : images) {
+            if (image.isEmpty()) continue;
+
+            String originalFilename = image.getOriginalFilename();
+            String fileExtension = "";
+
+            if (originalFilename != null && originalFilename.contains(".")) {
+                fileExtension = originalFilename.substring(originalFilename.lastIndexOf("."));
+            }
+
+            // UUID로 유니크한 파일명 생성 (중복방지)
+            String storedFileName = UUID.randomUUID().toString() + fileExtension;
+
+            try {
+                File dest = new File(uploadDir + storedFileName);
+                image.transferTo(dest); // 파일 저장
+
+                // 클라이언트가 접근 가능한 URL 경로
+                String imageUrl = "/images/" + storedFileName;
+                imageUrls.add(imageUrl);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return imageUrls;
+    }
+
 }

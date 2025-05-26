@@ -1,9 +1,14 @@
 package com.owlearn.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.owlearn.dto.*;
 import com.owlearn.service.TaleService;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -12,9 +17,11 @@ import java.util.List;
 public class TaleController {
 
     private final TaleService taleService;
+    private final ObjectMapper objectMapper;
 
     public TaleController(TaleService taleService) {
         this.taleService = taleService;
+        this.objectMapper = new ObjectMapper();
     }
 
     /**
@@ -39,13 +46,44 @@ public class TaleController {
     }
 
     /**
-     * 동화 직접 삽입 API
-     * @param request 동화의 전체 정보를 담은 요청 DTO
+     * 동화 직접 삽입 API (이미지 파일 업로드 포함)
+     * @param title 동화 제목
+     * @param contents 동화 내용 리스트
+     * @param quizzesJson JSON 문자열
+     * @param images 동화에 포함될 이미지 파일들 (multipart/form-data)
      * @return 생성된 동화의 ID를 포함한 응답 DTO
      */
-    @PostMapping("/insert")
-    public ResponseEntity<TaleResponse> insertTale(@RequestBody TaleDto request) {
-        Long taleId = taleService.insertTale(request);
+    @PostMapping(value = "/insert", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<TaleResponse> insertTale(
+            @RequestParam String title,
+            @RequestParam List<String> contents,
+            @RequestParam String quizzesJson,
+            @RequestPart("images") List<MultipartFile> images) {
+
+        // images 파일들을 서버 static 폴더에 저장하고 저장된 url 리스트 생성
+        List<String> savedImageUrls = taleService.saveImages(images);
+
+        // quizzesJson을 List<QuizDto>로 변환
+        List<QuizDto> quizzes;
+        try {
+            quizzes = objectMapper.readValue(quizzesJson, new TypeReference<List<QuizDto>>() {});
+        } catch (JsonProcessingException e) {
+            // JSON 파싱 실패
+            e.printStackTrace();
+            throw new RuntimeException("Invalid quizzes JSON format", e);
+        }
+
+        // TaleDto 생성
+        TaleDto taleDto = TaleDto.builder()
+                .title(title)
+                .contents(contents)
+                .imageUrls(savedImageUrls)
+                .quizzes(quizzes)
+                .build();
+
+        // DB에 저장
+        Long taleId = taleService.insertTale(taleDto);
+
         return ResponseEntity.ok(new TaleResponse(taleId));
     }
 

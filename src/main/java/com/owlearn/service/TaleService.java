@@ -4,6 +4,7 @@ import com.owlearn.dto.TaleCreateRequest;
 import com.owlearn.dto.TaleDetailResponse;
 import com.owlearn.dto.TaleDto;
 import com.owlearn.dto.TaleSummaryResponse;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -27,4 +28,6 @@ public interface TaleService {
     // 특정 ID에 해당하는 동화를 삭제
     void deleteTale(Long taleId);
 
+    // images 파일들을 서버 static 폴더에 저장하고 저장된 url 리스트 반환
+    List<String> saveImages(List<MultipartFile> images);
 }
