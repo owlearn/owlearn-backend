@@ -1,6 +1,6 @@
-package com.opensoftware.babsanglab.dto.exception;
+package com.owlearn.dto.exception;
 
-import com.opensoftware.babsanglab.exception.ErrorDefine;
+import com.owlearn.exception.ErrorDefine;
 import lombok.Getter;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Getter
-public class InvalidateArgumentExceptionDto extends ExceptionDto {
+public class InvalidateArgumentExceptionDto extends com.owlearn.dto.exception.ExceptionDto {
     private final Map<String, String> errorFields;
 
     public InvalidateArgumentExceptionDto(MethodArgumentNotValidException invalidException) {

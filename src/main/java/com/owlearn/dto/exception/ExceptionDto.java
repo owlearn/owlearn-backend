@@ -1,6 +1,6 @@
-package com.opensoftware.babsanglab.dto.exception;
+package com.owlearn.dto.exception;
 
-import com.opensoftware.babsanglab.exception.ErrorDefine;
+import com.owlearn.exception.ErrorDefine;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

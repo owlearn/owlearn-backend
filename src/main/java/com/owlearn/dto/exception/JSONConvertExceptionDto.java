@@ -1,13 +1,13 @@
-package com.opensoftware.babsanglab.dto.exception;
+package com.owlearn.dto.exception;
 
-import com.opensoftware.babsanglab.exception.ErrorDefine;
+import com.owlearn.exception.ErrorDefine;
 import lombok.Getter;
 import org.springframework.http.converter.HttpMessageConversionException;
 
 import java.util.Optional;
 
 @Getter
-public class JSONConvertExceptionDto extends ExceptionDto {
+public class JSONConvertExceptionDto extends com.owlearn.dto.exception.ExceptionDto {
     private final String message;
     private final String cause;
 
